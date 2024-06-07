@@ -1,7 +1,48 @@
 ---
-const {studentId} = Astro.params;
+import { db, eq } from "astro:db";
+import Layout from "../../layouts/Layout.astro";
+import { Student } from "astro:db";
+import { Courses } from "astro:db";
+import { Note } from "astro:db";
 
+const { studentId } = Astro.params;
 
+const studentIdNumber = Number(studentId);
+
+if (!studentIdNumber) return (window.location.href = "/");
+
+const studentResult = await db
+  .select({
+    first_name: Student.first_name,
+    last_name: Student.last_name,
+    course: Courses.title,
+  })
+  .from(Student)
+  .innerJoin(Courses, eq(Student.course, Courses.id))
+  .where(eq(Student.id, studentIdNumber));
+
+const student = studentResult[0];
+
+const notes = await db
+  .select()
+  .from(Note)
+  .where(eq(Note.studentId, studentIdNumber));
 ---
 
-<h1>{studentId}</h1>
+<Layout title="test">
+  <h1>{student.first_name} {student.last_name}</h1>
+  <p>{student.course}</p>
+  <form class="container" action="/api/note" method="post">
+    <input type="text" name="new_note" id="new_note" />
+    <button type="button" hx-post="/hello">Erstellen</button>
+  </form>
+  <ul>
+    {notes.map((notes) => <li>{notes.body}</li>)}
+  </ul>
+</Layout>
+
+<style>
+  ul {
+    border: 2px solid #323232;
+  }
+</style>

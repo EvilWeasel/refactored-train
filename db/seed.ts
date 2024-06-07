@@ -1,4 +1,4 @@
-import { Courses, Student, db } from 'astro:db';
+import { Courses, Note, Student, db } from 'astro:db';
 
 // https://astro.build/db/seed
 export default async function seed() {
@@ -12,7 +12,6 @@ export default async function seed() {
     { title: "FI24-3" },
     { title: "FI24-4" },
   ]);
-
 
   await db.insert(Student).values([
     {
@@ -47,7 +46,22 @@ export default async function seed() {
       last_name: "Stark",
       course: 2
     },
-  ])
+  ]);
+
+  await db.insert(Note).values([
+    {
+      studentId: 1,
+      body: "Great Student"
+    },
+    {
+      studentId: 1,
+      body: "Awesome Vibes"
+    },
+    {
+      studentId: 2,
+      body: "Great Ideas"
+    }
+  ]);
 }
 /**
  * 
