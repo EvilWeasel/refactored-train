@@ -1,0 +1,43 @@
+---
+import { eq } from "astro:db";
+import { Student } from "astro:db";
+import { db } from "astro:db";
+
+interface Props {
+  courseId: number;
+}
+
+const { courseId } = Astro.props;
+// const courseId = Astro.props.courseId;
+// Object-Destructuring
+
+const students = await db
+  .select()
+  .from(Student)
+  .where(eq(Student.course, courseId));
+---
+
+<ul>
+  {
+    students.map((student) => (
+      <a href={`/student/${student.id}`}>
+        <li>
+          <h3>
+            {student.first_name} {student.last_name}
+          </h3>
+        </li>
+      </a>
+    ))
+  }
+</ul>
+
+<style>
+  li {
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    border-radius: 5px;
+  }
+  h3 {
+    margin: 0;
+  }
+</style>

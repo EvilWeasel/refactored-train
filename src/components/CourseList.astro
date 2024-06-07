@@ -1,0 +1,17 @@
+---
+import { Courses } from "astro:db"
+import { db } from "astro:db"
+import StudentList from "./StudentList.astro";
+
+const courses = await db.select().from(Courses);
+---
+<div>
+  {
+    courses.map((course) => (
+      <details>
+        <summary>{course.title}</summary>
+        <StudentList courseId={course.id} />
+      </details>
+    ))
+  }
+</div>

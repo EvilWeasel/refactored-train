@@ -1,18 +1,12 @@
 ---
 import { db, Student } from 'astro:db';
 import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import CourseList from '../components/CourseList.astro';
 
 const students = await db.select().from(Student);
 ---
 
 <Layout title="Home">
-	<ul class="container">
-    {
-      students.map(({first_name, last_name}) => (
-        <li>
-          <h3>{first_name} {last_name}</h3>
-        </li>
-      ))
-    }
-  </ul>
+	<CourseList />
 </Layout>
