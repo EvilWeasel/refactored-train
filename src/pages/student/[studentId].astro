@@ -13,6 +13,7 @@ if (!studentIdNumber) return (window.location.href = "/");
 
 const studentResult = await db
   .select({
+    id: Student.id,
     first_name: Student.first_name,
     last_name: Student.last_name,
     course: Courses.title,
@@ -32,17 +33,70 @@ const notes = await db
 <Layout title="test">
   <h1>{student.first_name} {student.last_name}</h1>
   <p>{student.course}</p>
-  <form class="container" action="/api/note" method="post">
-    <input type="text" name="new_note" id="new_note" />
-    <button type="button" hx-post="/hello">Erstellen</button>
+  <form class="container">
+    <fieldset role="group">
+      <input
+        type="number"
+        aria-hidden
+        readonly
+        value={student.id}
+        hidden
+        name="student_id"
+      />
+      <input type="text" name="body" id="body" />
+      <button
+        type="button"
+        hx-swap="beforeend"
+        hx-post="/partials/new_note"
+        hx-target="#notes_container">Erstellen</button
+      >
+    </fieldset>
   </form>
-  <ul>
-    {notes.map((notes) => <li>{notes.body}</li>)}
+  <ul id="notes_container">
+    {
+      notes.map((note) => (
+        <div class="note-wrapper" id={`note-${note.id}`}>
+          <li class="note">
+            <p>{note.body}</p>
+          </li>
+          <button
+            type="button"
+            class="outline"
+            hx-delete={`/api/notes/${note.id}`}
+            hx-target={`#note-${note.id}`}
+            hx-trigger="click once"
+          >
+            <img
+              src="/spinner-delete.svg"
+              alt="loading..."
+              class="htmx-indicator"
+            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24px"
+              height="24px"
+              viewBox="0 0 24 24"
+              class="trash-icon"
+            >
+              <path
+                fill="currentColor"
+                d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"
+              />
+            </svg>
+          </button>
+        </div>
+      ))
+    }
   </ul>
 </Layout>
 
 <style>
   ul {
-    border: 2px solid #323232;
+    border: 2px solid #3232327f;
+    border-radius: 0.5rem;
+    box-shadow: 2px 2px 2px #3232327f;
+  }
+  .note p {
+    line-clamp: 1 !important;
   }
 </style>

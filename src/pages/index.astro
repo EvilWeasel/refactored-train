@@ -1,12 +1,8 @@
 ---
-import { db, Student } from 'astro:db';
-import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
-import CourseList from '../components/CourseList.astro';
-
-const students = await db.select().from(Student);
+import Layout from "../layouts/Layout.astro";
+import CourseList from "../components/CourseList.astro";
 ---
 
 <Layout title="Home">
-	<CourseList />
+  <CourseList />
 </Layout>

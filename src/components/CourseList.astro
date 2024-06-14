@@ -1,17 +1,67 @@
 ---
-import { Courses } from "astro:db"
-import { db } from "astro:db"
+import { Courses } from "astro:db";
+import { db } from "astro:db";
 import StudentList from "./StudentList.astro";
 
 const courses = await db.select().from(Courses);
 ---
+
 <div>
+  <form action="/api/students" method="post">
+    <fieldset role="group">
+      <select name="courseId" id="courseId">
+        {
+          courses.map((course) => (
+            <option value={course.id}>{course.title}</option>
+          ))
+        }
+      </select>
+      <input
+        type="text"
+        name="first_name"
+        id="first_name"
+        placeholder="Max"
+        required
+        maxlength="50"
+      />
+      <input
+        type="text"
+        name="last_name"
+        id="last_name"
+        placeholder="Mustermann"
+        required
+        maxlength="50"
+      />
+      <button type="submit">Send</button>
+    </fieldset>
+  </form>
+  <hr />
   {
     courses.map((course) => (
       <details>
         <summary>{course.title}</summary>
+
         <StudentList courseId={course.id} />
       </details>
     ))
   }
 </div>
+
+<style>
+  form fieldset select {
+    max-width: 15ch;
+  }
+  @media screen and (max-width: 600px) {
+    form fieldset select {
+      max-width: 100%;
+    }
+    fieldset[role="group"] {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    fieldset[role="group"] * {
+      border-radius: 0.3rem;
+    }
+  }
+</style>

@@ -18,6 +18,7 @@ const Student = defineTable({
 
 const Note = defineTable({
   columns: {
+    id: column.number({ primaryKey: true }),
     body: column.text(),
     studentId: column.number({ references: () => Student.columns.id })
   }

@@ -1,0 +1,48 @@
+---
+import { db, Note } from "astro:db";
+export const partial = true;
+
+const request = Astro.request;
+const form = await request.formData();
+const body = form.get("body")?.toString();
+const student_id = Number(form.get("student_id")?.toString());
+if (!body || !student_id)
+  return new Response("missing body or student_id", { status: 400 });
+const newNotes = await db
+  .insert(Note)
+  .values([
+    {
+      studentId: student_id,
+      body: body,
+    },
+  ])
+  .returning();
+const note = newNotes[0];
+if (!note) return redirect("/");
+console.log(note);
+---
+
+<div class="note-wrapper" id={`note-${note.id}`}>
+  <li class="note">{note.body}</li>
+  <button
+    type="button"
+    class="outline"
+    hx-delete={`/api/notes/${note.id}`}
+    hx-target={`#note-${note.id}`}
+    hx-trigger="click once"
+  >
+    <img src="/spinner-delete.svg" alt="loading..." class="htmx-indicator" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24px"
+      height="24px"
+      viewBox="0 0 24 24"
+      class="trash-icon"
+    >
+      <path
+        fill="currentColor"
+        d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"
+      ></path>
+    </svg>
+  </button>
+</div>
